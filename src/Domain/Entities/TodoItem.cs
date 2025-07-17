@@ -12,6 +12,9 @@ public class TodoItem : BaseAuditableEntity
 
     public DateTime? Reminder { get; set; }
 
+    // Added new property
+    public Colour BackgroundColor { get; set; } = Colour.White;
+
     private bool _done;
     public bool Done
     {

@@ -438,6 +438,9 @@
           },
           "done": {
             "type": "boolean"
+          },
+          "backgroundColor": {
+            "type": "string"
           }
         }
       },
@@ -450,6 +453,10 @@
             "format": "int32"
           },
           "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "backgroundColor": {
             "type": "string",
             "nullable": true
           }
@@ -469,6 +476,10 @@
           },
           "done": {
             "type": "boolean"
+          },
+          "backgroundColor": {
+            "type": "string",
+            "nullable": true
           }
         }
       },

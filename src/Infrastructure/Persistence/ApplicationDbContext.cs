@@ -59,7 +59,12 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
             .HasIndex(t => t.Name)
             .IsUnique();
 
+        // Feature 3: Add global query filters for soft delete
+        builder.Entity<TodoItem>().HasQueryFilter(e => !e.IsDeleted);
+        builder.Entity<TodoList>().HasQueryFilter(e => !e.IsDeleted);
+
         base.OnModelCreating(builder);
+
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

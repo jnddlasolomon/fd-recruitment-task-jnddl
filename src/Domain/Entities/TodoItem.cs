@@ -1,6 +1,8 @@
-﻿namespace Todo_App.Domain.Entities;
+﻿using Todo_App.Domain.Common;
 
-public class TodoItem : BaseAuditableEntity
+namespace Todo_App.Domain.Entities;
+
+public class TodoItem : BaseAuditableEntity, ISoftDeletable
 {
     public int ListId { get; set; }
 
@@ -14,6 +16,10 @@ public class TodoItem : BaseAuditableEntity
 
     // Added new property Feature 1
     public Colour BackgroundColor { get; set; } = Colour.White;
+
+    // Feature 3: Soft Delete
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedAt { get; set; }
 
     private bool _done;
     public bool Done

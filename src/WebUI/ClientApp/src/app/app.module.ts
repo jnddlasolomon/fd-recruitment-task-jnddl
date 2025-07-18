@@ -14,10 +14,14 @@ import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { TodoComponent } from './todo/todo.component';
 import { TokenComponent } from './token/token.component';
 
+// NEW: Import the tag components
+import { TagManagementComponent } from './todo/tag-management/tag-management.component';
+import { TagSelectorComponent } from './todo/tag-selector/tag-selector.component';
+import { TagFilterComponent } from './todo/tag-filter/tag-filter.component';
+
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 
 @NgModule({
   declarations: [
@@ -27,12 +31,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     CounterComponent,
     FetchDataComponent,
     TodoComponent,
-    TokenComponent
+    TokenComponent,
+
+    // NEW: Add the tag components
+    TagManagementComponent,
+    TagSelectorComponent,
+    TagFilterComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
-    FormsModule,
+    FormsModule, // ✅ Already present - perfect for ngModel
     ReactiveFormsModule,
     ApiAuthorizationModule,
     AppRoutingModule,

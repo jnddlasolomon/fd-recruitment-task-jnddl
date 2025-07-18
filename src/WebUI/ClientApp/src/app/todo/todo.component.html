@@ -2,6 +2,24 @@
 
 <p>This is a complex todo list component.</p>
 
+<!-- Tag Management Component -->
+<div class="row mb-3" *ngIf="lists">
+  <div class="col-12">
+    <app-tag-management (tagCreated)="onTagCreated($event)"
+                        (tagDeleted)="onTagDeleted($event)">
+    </app-tag-management>
+  </div>
+</div>
+
+<!-- Tag Filter Component -->
+<div class="row mb-3" *ngIf="lists">
+  <div class="col-12">
+    <app-tag-filter [currentFilter]="currentFilter"
+                    (filterChanged)="onFilterChanged($event)">
+    </app-tag-filter>
+  </div>
+</div>
+
 <p *ngIf="!lists"><em>Loading...</em></p>
 
 <div *ngIf="lists">
@@ -11,13 +29,13 @@
       <div class="clearfix">
         <h2 class="float-start">Lists</h2>
         <button class="btn btn-default float-end" title="New List..."
-          (click)="showNewListModal(newListModalTemplate)">
+                (click)="showNewListModal(newListModalTemplate)">
           <i class="bi bi-journal-plus"></i>
         </button>
       </div>
       <ul class="list-group">
         <li *ngFor="let list of lists; index as i" class="list-group-item"
-          [ngClass]="{ 'active': selectedList == list }" (click)="selectedList = list">
+            [ngClass]="{ 'active': selectedList == list }" (click)="selectedList = list">
           <div class="clearfix">
             <div class="float-start">
               {{ list.title }}
@@ -33,28 +51,91 @@
       <div class="clearfix">
         <h2 class="float-start">{{ selectedList.title }}</h2>
         <button id="listOptions" class="btn btn-default float-end" title="List Options..."
-          (click)="showListOptionsModal(listOptionsModalTemplate)">
+                (click)="showListOptionsModal(listOptionsModalTemplate)">
           <i class="bi bi-three-dots-vertical"></i>
         </button>
       </div>
+      <!-- Display filtered items instead of all items -->
       <ul id="todo-items" class="list-group mb-2">
-        <li class="list-group-item" *ngFor="let item of selectedList.items; index as i">
+        <li class="list-group-item" *ngFor="let item of getFilteredItems(); index as i"
+            [style.background-color]="getItemBackgroundColor(item)">
           <div class="d-flex">
             <div class="todo-item-checkbox">
               <input type="checkbox" [(ngModel)]="item.done" (change)="updateItem(item)" />
             </div>
             <div class="flex-fill">
               <input id="{{ 'itemTitle' + i }}" *ngIf="item == selectedItem" type="text"
-                class="form-control item-input-control" [(ngModel)]="item.title" (keyup.enter)="updateItem(item, true)"
-                (blur)="updateItem(item)" autofocus="autofocus" />
+                     class="form-control item-input-control" [(ngModel)]="item.title" (keyup.enter)="updateItem(item, true)"
+                     (blur)="updateItem(item)" autofocus="autofocus" />
               <div class="todo-item-title" *ngIf="item != selectedItem" [ngClass]="{ 'done-todo': item.done }"
-                (click)="editItem(item, 'itemTitle' + i)" class="form-control item-input-control">
+                   (click)="editItem(item, 'itemTitle' + i)" class="form-control item-input-control">
                 <span>{{ item.title }}</span>
+              </div>
+
+              <!-- Tag Selector for each item -->
+              <div class="todo-item-tags mt-1" *ngIf="item.id != 0">
+                <app-tag-selector [todoItem]="item"
+                                  [currentTags]="getItemTags(item.id)"
+                                  (tagsUpdated)="onItemTagsUpdated($event, item)">
+                </app-tag-selector>
+              </div>
+            </div>
+            <div class="todo-item-color-picker">
+              <div class="dropdown" *ngIf="item.id != 0">
+                <button class="btn btn-sm color-picker-btn" type="button"
+                        [style.background-color]="getItemBackgroundColor(item)"
+                        (click)="toggleColorPicker(item)">
+                  <i class="bi bi-palette"></i>
+                </button>
+                <ul class="dropdown-menu color-palette"
+                    [class.show]="selectedColorItem === item"
+                    [style.display]="selectedColorItem === item ? 'block' : 'none'">
+                  <li>
+                    <a class="dropdown-item color-option" href="#"
+                       (click)="changeItemColor(item, '#FFFFFF')"
+                       style="background-color: #FFFFFF">White</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item color-option" href="#"
+                       (click)="changeItemColor(item, '#FF5733')"
+                       style="background-color: #FF5733">Red</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item color-option" href="#"
+                       (click)="changeItemColor(item, '#FFC300')"
+                       style="background-color: #FFC300">Orange</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item color-option" href="#"
+                       (click)="changeItemColor(item, '#FFFF66')"
+                       style="background-color: #FFFF66">Yellow</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item color-option" href="#"
+                       (click)="changeItemColor(item, '#CCFF99')"
+                       style="background-color: #CCFF99">Green</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item color-option" href="#"
+                       (click)="changeItemColor(item, '#6666FF')"
+                       style="background-color: #6666FF">Blue</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item color-option" href="#"
+                       (click)="changeItemColor(item, '#9966CC')"
+                       style="background-color: #9966CC">Purple</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item color-option" href="#"
+                       (click)="changeItemColor(item, '#999999')"
+                       style="background-color: #999999">Grey</a>
+                  </li>
+                </ul>
               </div>
             </div>
             <div class="todo-item-commands">
               <button *ngIf="item.id != 0" (click)="showItemDetailsModal(itemDetailsModalTemplate, item)"
-                class="btn btn-default btn-xs" role="button">
+                      class="btn btn-default btn-xs" role="button">
                 <i class="bi bi-three-dots-vertical"></i>
               </button>
             </div>
@@ -67,6 +148,7 @@
     </div>
   </div>
 </div>
+
 
 <div *ngIf="debug">
   <pre>{{ lists | json }}</pre>
@@ -83,7 +165,7 @@
     <div class="form-group">
       <label for="inputListTitle">Title</label>
       <input type="text" class="form-control" id="inputListTitle" placeholder="List name..."
-        [(ngModel)]="listOptionsEditor.title" (keyup.enter)="updateListOptions()" />
+             [(ngModel)]="listOptionsEditor.title" (keyup.enter)="updateListOptions()" />
     </div>
     <div *ngIf="debug">
       <pre>{{ listOptionsEditor | json }}</pre>
@@ -177,7 +259,7 @@
     <div class="form-group">
       <label for="title">Title</label>
       <input type="text" class="form-control" id="title" placeholder="List title..." [(ngModel)]="newListEditor.title"
-        [ngClass]="{ 'is-invalid': newListEditor.error }" (keyup.enter)="addList()" />
+             [ngClass]="{ 'is-invalid': newListEditor.error }" (keyup.enter)="addList()" />
       <div *ngIf="newListEditor.error" class="invalid-feedback">
         {{ newListEditor.error }}
       </div>

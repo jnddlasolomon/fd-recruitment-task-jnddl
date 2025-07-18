@@ -1,0 +1,83 @@
+<div class="tag-filter">
+  <!-- Search Input -->
+  <div class="search-section">
+    <div class="search-input-group">
+      <i class="bi bi-search search-icon"></i>
+      <input type="text"
+             class="search-input"
+             placeholder="Search todo items..."
+             [(ngModel)]="searchTerm"
+             (input)="onSearchChange()">
+      <button *ngIf="searchTerm"
+              class="clear-search"
+              (click)="clearSearchFilter()"
+              title="Clear search">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tag Filters -->
+  <div class="tag-filters-section" *ngIf="availableTags.length > 0">
+    <div class="filter-header">
+      <span class="filter-title">Filter by Tags:</span>
+      <button *ngIf="currentFilter.selectedTagIds.length > 0"
+              class="clear-tags-btn"
+              (click)="clearTagFilters()">
+        Clear Tags
+      </button>
+    </div>
+
+    <!-- Available Tags -->
+    <div class="tag-filter-options">
+      <button *ngFor="let tag of availableTags"
+              class="tag-filter-btn"
+              [class.selected]="isTagSelected(tag.id!)"
+              [style.background-color]="isTagSelected(tag.id!) ? tag.color : 'transparent'"
+              [style.border-color]="tag.color"
+              [style.color]="isTagSelected(tag.id!) ? 'white' : tag.color"
+              (click)="toggleTag(tag)">
+        {{ tag.name }}
+        <i class="bi bi-check" *ngIf="isTagSelected(tag.id!)"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Active Filters Summary -->
+  <div class="active-filters" *ngIf="hasActiveFilters()">
+    <div class="active-filters-header">
+      <span>Active Filters:</span>
+      <button class="clear-all-btn"
+              (click)="clearAllFilters()">
+        Clear All
+      </button>
+    </div>
+
+    <div class="active-filter-items">
+      <!-- Search Term -->
+      <div class="active-filter-item" *ngIf="currentFilter.searchTerm">
+        <i class="bi bi-search"></i>
+        <span>Search: "{{ currentFilter.searchTerm }}"</span>
+        <button (click)="clearSearchFilter()">×</button>
+      </div>
+
+      <!-- Selected Tags -->
+      <div *ngFor="let tag of getSelectedTags()"
+           class="active-filter-item tag-filter-item"
+           [style.background-color]="tag.color">
+        <span>{{ tag.name }}</span>
+        <button (click)="toggleTag(tag)">×</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Filters Message -->
+  <div class="no-filters" *ngIf="!hasActiveFilters() && availableTags.length > 0">
+    <p>Use the search bar or select tags to filter your todo items.</p>
+  </div>
+
+  <!-- No Tags Available -->
+  <div class="no-tags-available" *ngIf="availableTags.length === 0">
+    <p>No tags available. Create some tags to enable filtering!</p>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="tag-selector">
+  <!-- Display current tags -->
+  <div class="current-tags" *ngIf="currentTags && currentTags.length > 0">
+    <span *ngFor="let tag of currentTags"
+          class="tag-badge"
+          [style.background-color]="tag.color">
+      {{ tag.name }}
+      <button class="tag-remove"
+              (click)="removeTag(tag)"
+              title="Remove tag">
+        ×
+      </button>
+    </span>
+  </div>
+
+  <!-- Tag selector dropdown -->
+  <div class="tag-selector-dropdown" [class.open]="showTagDropdown">
+    <button class="tag-selector-trigger"
+            (click)="toggleDropdown()"
+            type="button">
+      <i class="bi bi-tag"></i>
+      Add Tag
+      <i class="bi bi-chevron-down"></i>
+    </button>
+
+    <div class="tag-dropdown-menu" *ngIf="showTagDropdown">
+      <div class="tag-dropdown-header">
+        <span>Select Tags</span>
+        <button class="close-dropdown"
+                (click)="closeDropdown()"
+                type="button">
+          ×
+        </button>
+      </div>
+
+      <div class="tag-options">
+        <div *ngFor="let tag of availableTags"
+             class="tag-option"
+             [class.selected]="isTagSelected(tag)"
+             (click)="toggleTag(tag)">
+          <div class="tag-color-indicator"
+               [style.background-color]="tag.color">
+          </div>
+          <span class="tag-name">{{ tag.name }}</span>
+          <i class="bi bi-check tag-check"
+             *ngIf="isTagSelected(tag)">
+          </i>
+        </div>
+      </div>
+
+      <div class="no-tags" *ngIf="availableTags.length === 0">
+        <p>No tags available. Create some tags first!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backdrop to close dropdown -->
+  <div class="dropdown-backdrop"
+       *ngIf="showTagDropdown"
+       (click)="closeDropdown()">
+  </div>
+</div>

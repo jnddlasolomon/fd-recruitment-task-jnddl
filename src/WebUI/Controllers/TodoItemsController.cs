@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Todo_App.Application.Common.Models;
+using Todo_App.Application.TodoItems.Commands.AddTagToTodoItem;
 using Todo_App.Application.TodoItems.Commands.CreateTodoItem;
 using Todo_App.Application.TodoItems.Commands.DeleteTodoItem;
+using Todo_App.Application.TodoItems.Commands.RemoveTagFromTodoItem;
 using Todo_App.Application.TodoItems.Commands.UpdateTodoItem;
 using Todo_App.Application.TodoItems.Commands.UpdateTodoItemDetail;
+using Todo_App.Application.TodoItems.Commands.UpdateTodoItemTags;
 using Todo_App.Application.TodoItems.Queries.GetTodoItemsWithPagination;
 
 namespace Todo_App.WebUI.Controllers;
@@ -11,7 +14,7 @@ namespace Todo_App.WebUI.Controllers;
 public class TodoItemsController : ApiControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<PaginatedList<TodoItemBriefDto>>> GetTodoItemsWithPagination([FromQuery] GetTodoItemsWithPaginationQuery query)
+    public async Task<ActionResult<PaginatedList<TodoItemDto>>> GetTodoItemsWithPagination([FromQuery] GetTodoItemsWithPaginationQuery query)
     {
         return await Mediator.Send(query);
     }
@@ -53,6 +56,28 @@ public class TodoItemsController : ApiControllerBase
     {
         await Mediator.Send(new DeleteTodoItemCommand(id));
 
+        return NoContent();
+    }
+
+    // Feature 2: Tag Management for TodoItems
+    [HttpPost("{id}/tags/{tagId}")]
+    public async Task<IActionResult> AddTag(int id, int tagId)
+    {
+        await Mediator.Send(new AddTagToTodoItemCommand { TodoItemId = id, TagId = tagId });
+        return NoContent();
+    }
+
+    [HttpDelete("{id}/tags/{tagId}")]
+    public async Task<IActionResult> RemoveTag(int id, int tagId)
+    {
+        await Mediator.Send(new RemoveTagFromTodoItemCommand { TodoItemId = id, TagId = tagId });
+        return NoContent();
+    }
+
+    [HttpPut("{id}/tags")]
+    public async Task<IActionResult> UpdateTags(int id, [FromBody] List<int> tagIds)
+    {
+        await Mediator.Send(new UpdateTodoItemTagsCommand { TodoItemId = id, TagIds = tagIds });
         return NoContent();
     }
 }

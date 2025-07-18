@@ -1,0 +1,70 @@
+<div class="tag-management">
+  <div class="tag-management-header">
+    <h3>Manage Tags</h3>
+    <button class="btn btn-primary btn-sm"
+            (click)="showCreateForm = !showCreateForm"
+            type="button">
+      <i class="fas fa-plus"></i> Add Tag
+    </button>
+  </div>
+
+  <!-- Create Tag Form -->
+  <div class="create-tag-form" *ngIf="showCreateForm">
+    <div class="form-group">
+      <label for="tagName">Tag Name</label>
+      <input type="text"
+             id="tagName"
+             class="form-control"
+             [(ngModel)]="newTag.name"
+             placeholder="Enter tag name..."
+             maxlength="50">
+    </div>
+
+    <div class="form-group">
+      <label>Tag Color</label>
+      <div class="color-picker">
+        <div *ngFor="let color of predefinedColors"
+             class="color-option"
+             [style.background-color]="color.value"
+             [class.selected]="newTag.color === color.value"
+             (click)="selectColor(color.value)"
+             [title]="color.name">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-success btn-sm"
+              (click)="createTag()"
+              [disabled]="!newTag.name.trim()">
+        Create Tag
+      </button>
+      <button class="btn btn-secondary btn-sm ml-2"
+              (click)="resetCreateForm()">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- Tags List -->
+  <div class="tags-list" *ngIf="tags.length > 0">
+    <h4>Existing Tags</h4>
+    <div class="tag-items">
+      <div *ngFor="let tag of tags"
+           class="tag-item"
+           [style.background-color]="tag.color">
+        <span class="tag-name">{{ tag.name }}</span>
+        <button class="btn btn-sm btn-danger tag-delete"
+                (click)="deleteTag(tag)"
+                title="Delete tag">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="tags.length === 0 && !showCreateForm">
+    <p>No tags created yet. Click "Add Tag" to create your first tag!</p>
+  </div>
+</div>

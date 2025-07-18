@@ -12,7 +12,7 @@ public class TodoItem : BaseAuditableEntity
 
     public DateTime? Reminder { get; set; }
 
-    // Added new property
+    // Added new property Feature 1
     public Colour BackgroundColor { get; set; } = Colour.White;
 
     private bool _done;
@@ -31,4 +31,7 @@ public class TodoItem : BaseAuditableEntity
     }
 
     public TodoList List { get; set; } = null!;
+
+    // Feature 2: Tags support Many-to-many relationship
+    public ICollection<TodoItemTag> TodoItemTags { get; set; } = new List<TodoItemTag>();
 }

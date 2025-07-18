@@ -31,9 +31,33 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
 
     public DbSet<TodoItem> TodoItems => Set<TodoItem>();
 
+    // Feature 2: Tags support
+    public DbSet<Tag> Tags => Set<Tag>();
+
+    public DbSet<TodoItemTag> TodoItemTags => Set<TodoItemTag>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        // Feature 2: Configure many-to-many relationship for TodoItems and Tags
+        builder.Entity<TodoItemTag>()
+            .HasKey(tt => new { tt.TodoItemId, tt.TagId });
+
+        builder.Entity<TodoItemTag>()
+            .HasOne(tt => tt.TodoItem)
+            .WithMany(t => t.TodoItemTags)
+            .HasForeignKey(tt => tt.TodoItemId);
+
+        builder.Entity<TodoItemTag>()
+            .HasOne(tt => tt.Tag)
+            .WithMany(t => t.TodoItemTags)
+            .HasForeignKey(tt => tt.TagId);
+
+        // Ensure tag names are unique
+        builder.Entity<Tag>()
+            .HasIndex(t => t.Name)
+            .IsUnique();
 
         base.OnModelCreating(builder);
     }
